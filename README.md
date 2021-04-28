@@ -1,5 +1,5 @@
 # covidSTSCI
-Final Project for STSCI 4740
+Final Project for STSCI 4740 <br/>
 Henry Manley, Heather Ginsburg, Jordi Socher, Sophie Keller, Sam Meakem
 
 ## Research Question:
@@ -10,7 +10,7 @@ change when we exclude COVID-19 measures? How does this estimate look 2 weeks
 into the pandemic? 5 months? The “end”?
 
 ## Model Specification:
-TBD 
+TBD
 
 ## Data Sources:
 That Paper, World Data Bank(?)

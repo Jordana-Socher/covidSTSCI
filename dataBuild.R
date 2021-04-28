@@ -1,9 +1,11 @@
 # Build data from local files. This
 
-path = getwd()
-setwd(path)
-
 source("requirements.R")
+
+path = getwd()
+if (!grepl("covidSTSCI", path)){
+  setwd(paste(path, "/covidSTSCI", sep = ""))
+}
 
 rm(list = ls())
 covidData = read_excel('COVID.xlsx')
