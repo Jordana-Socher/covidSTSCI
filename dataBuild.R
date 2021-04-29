@@ -50,9 +50,9 @@ names[24] = 'accountRank'
 colnames(masterData) = names
 
 # Split into "n-tiles"
-masterData$corruptionRank50 =  quantcut( masterData$gdp_per_capita ,2, levels.mean=T)
-masterData$corruptionRank33 =  quantcut( masterData$gdp_per_capita ,3, levels.mean=T)
-masterData$corruptionRank25 =  quantcut( masterData$gdp_per_capita ,4, levels.mean=T)
-masterData$corruptionRank10 =  quantcut( masterData$gdp_per_capita ,10, levels.mean=T)
+masterData$gdp50 =  quantcut( masterData$gdp_per_capita ,2, levels.mean=T, na.rm=TRUE)
+masterData$gdp33 =  quantcut( masterData$gdp_per_capita ,3, levels.mean=T, na.rm=TRUE)
+masterData$gdp25 =  quantcut( masterData$gdp_per_capita ,4, levels.mean=T, na.rm=TRUE)
+masterData$gdp10 =  quantcut( masterData$gdp_per_capita ,10, levels.mean=T, na.rm=TRUE)
 
 save(masterData, file = "covidCorruption.RData")
