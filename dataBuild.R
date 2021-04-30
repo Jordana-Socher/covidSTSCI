@@ -50,6 +50,7 @@ names[24] = 'accountRank'
 colnames(masterData) = names
 
 # Split into "n-tiles"
+masterData$gdphalf =ifelse(masterData$gdp_per_capita > mean(masterData$gdp_per_capita), yes = 1, no = 0)
 masterData$gdp50 =  quantcut( masterData$gdp_per_capita ,2, levels.mean=T, na.rm=TRUE)
 masterData$gdp33 =  quantcut( masterData$gdp_per_capita ,3, levels.mean=T, na.rm=TRUE)
 masterData$gdp25 =  quantcut( masterData$gdp_per_capita ,4, levels.mean=T, na.rm=TRUE)

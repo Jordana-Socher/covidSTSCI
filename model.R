@@ -13,7 +13,12 @@ testing = test$gdp50
 
 # How do these regressors predict how corrupt a country is? How does this compare to model excluding
 # covid numbers etc. Do we need some model selection technique? Grid search?
-lda = lda(gdp50 ~ gdp_per_capita + total_cases + total_deaths + population + stringency_index + human_development_index, data=masterData, subset = training)
+
+lda = lda(gdphalf ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
+
+lda = lda(gdphalf ~  total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
 lda_pred = predict(lda, test)
 error = mean(lda_pred$class != testing)
 error
+
+
