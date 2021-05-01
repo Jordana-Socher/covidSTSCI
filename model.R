@@ -65,9 +65,15 @@ data.frame(
 
 # How do these regressors predict how corrupt a country is? How does this compare to model excluding
 # covid numbers etc. Do we need some model selection technique? Grid search?
-r = lm(total_deaths ~ gdp_per_capita + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
-r = lm(total_deaths~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
+r = lm(gdp_per_capita ~ total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
 summary(r)
+r = lm(total_deaths~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
+
+
+r = glm(gdp_per_capita ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
+summary(r)
+r = glm(total_cases ~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
+
 lm_pred = predict(r, test)
 res = testing - lm_pred
 mean(res)
