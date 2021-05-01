@@ -48,6 +48,14 @@ names[22] = 'regulationRank'
 names[23] = 'lawRank'
 names[24] = 'accountRank'
 colnames(masterData) = names
+attach(masterData)
+
+masterData$corruptionRank <- as.numeric(as.character(masterData$corruptionRank))
+masterData$govRank <- as.numeric(as.character(masterData$govRank))
+masterData$stabilityRank <- as.numeric(as.character(masterData$stabilityRank))
+masterData$regulationRank <- as.numeric(as.character(masterData$regulationRank))
+masterData$lawRank <- as.numeric(as.character(masterData$lawRank))
+masterData$accountRank <- as.numeric(as.character(masterData$accountRank))
 
 # Split into "n-tiles"
 masterData$gdphalf =ifelse(masterData$gdp_per_capita > mean(masterData$gdp_per_capita), yes = 1, no = 0)
