@@ -8,19 +8,19 @@ load("covidCorruption.RData")
 # three points, for a handful of countries, over time. For example, Mar1, June1, Oct19.
 
 #install.packages(c("cowplot","googleway", "ggplot2", "ggrepel",
-#                   "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata", 
-#                   "rgeos", readxl))         
+#                   "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata",
+#                   "rgeos", readxl))
 library("readxl")
 library(dplyr)
 library(tidyr)
-library("ggplot2")  
+library("ggplot2")
 theme_set(theme_bw())
 library("sf")
 library("rnaturalearth")
 library("rnaturalearthdata")
 library(rgeos)
 
-#bringing in covid data alone to get the specific max case rate per country 
+#bringing in covid data alone to get the specific max case rate per country
 covid<-read_excel("COVID.xlsx")
 
 #original plots
@@ -36,6 +36,7 @@ plot1
 plot2
 plot3
 plot4
+plot5
 plot6
 plot7
 
@@ -44,14 +45,14 @@ covid<-covid%>%drop_na(total_cases, population, gdp_per_capita)
 covid$caseRatePer100k = covid$total_cases/(covid$population/100000)
 covid_max_rate_df<-covid%>%group_by(location)%>%summarise(max(caseRatePer100k))
 
-#using ne_countries to get map of countries 
+#using ne_countries to get map of countries
 world <- ne_countries(scale = "medium", returnclass = "sf")
 
 #merging world df with covid_max_rate_df to plot and renaming column
 world_1=merge(world, covid_max_rate_df, by.x="name", by.y="location")
 names(world_1)[names(world_1) == "max(caseRatePer100k)"] <- "max_case_rate"
 
-#merging world with masterData df to plot corruption and gdp 
+#merging world with masterData df to plot corruption and gdp
 world_2=merge(world, masterData, by.x="name", by.y="location")
 world_2$corruptionRank=as.double(world_2$corruptionRank)
 
@@ -69,6 +70,3 @@ ggplot(data = world_2) +
 ggplot(data = world_2) +
   geom_sf(aes(fill = corruptionRank)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
-
-
-
