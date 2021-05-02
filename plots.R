@@ -53,8 +53,18 @@ world_1=merge(world, covid_max_rate_df, by.x="name", by.y="location")
 names(world_1)[names(world_1) == "max(caseRatePer100k)"] <- "max_case_rate"
 
 #merging world with masterData df to plot corruption and gdp
-world_2=merge(world, masterData, by.x="name", by.y="location")
-world_2$corruptionRank=as.double(world_2$corruptionRank)
+masterData<-masterData%>%drop_na(gdp2020)
+percent_change_gdp=masterData%>%group_by(Country.or.Area)%>%summarise((gdp2020-gdp2019)/gdp2020)
+percent_change_gdp=unique(percent_change_gdp)
+names(percent_change_gdp)[names(percent_change_gdp) == "(gdp2020 - gdp2019)/gdp2020"] <- "percent_change_gdp"
+percent_change_gdp$percent_change_gdp=abs(percent_change_gdp$percent_change_gdp)
+
+world_2=merge(world, percent_change_gdp, by.x="name", by.y="Country.or.Area")
+
+lawrank=masterData %>%
+  select(Country.or.Area, lawRank)
+lawrank=unique(lawrank)
+world_3=merge(world, lawrank, by.x="name", by.y="Country.or.Area")
 
 #world plot of max case rate per country
 ggplot(data = world_1) +
@@ -63,10 +73,10 @@ ggplot(data = world_1) +
 
 #world plot of gdp per country
 ggplot(data = world_2) +
-  geom_sf(aes(fill = gdp_per_capita)) +
+  geom_sf(aes(fill = percent_change_gdp)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
 
 #world plot of corruption per country
-ggplot(data = world_2) +
-  geom_sf(aes(fill = corruptionRank)) +
+ggplot(data = world_3) +
+  geom_sf(aes(fill = lawRank)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
