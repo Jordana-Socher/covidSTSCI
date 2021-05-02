@@ -24,13 +24,14 @@ library(rgeos)
 covid<-read_excel("COVID.xlsx")
 
 #original plots
-plot1 = ggplot(data =masterData, aes(x = caseRatePer100k, y = deathRatePer100k)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot2 = ggplot(data =masterData, aes(x = corruptionRank, y = deathRatePer100k)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot3 = ggplot(data =masterData, aes(x = govRank, y = deathRatePer100k)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot4 = ggplot(data =masterData, aes(x = stabilityRank, y = deathRatePer100k)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot5 = ggplot(data =masterData, aes(x = gdp_per_capita, y = deathRatePer100k)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot6 = ggplot(data =masterData, aes(x = gdp_per_capita, y = corruptionRank)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
-plot7 = ggplot(data =masterData, aes(x = gdp_per_capita, y = corruptionRank)) + geom_text(aes(label = location), size = 2) + geom_smooth(method = "lm")
+plot1 = ggplot(data =masterData, aes(x = lawRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot2 = ggplot(data =masterData, aes(x = accountRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot4 = ggplot(data =masterData, aes(x = total_deaths, y = gdp_per_capita))  + geom_smooth(method = "lm")
+plot5 = ggplot(data =masterData, aes(x = regulationRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot6 = ggplot(data =masterData, aes(x = govRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot8 = ggplot(data =masterData, aes(x = total_cases, y = gdp_per_capita)) + geom_smooth(method = "lm")
 
 plot1
 plot2
@@ -39,6 +40,7 @@ plot4
 plot5
 plot6
 plot7
+plot8
 
 #adding case rate to covid data and creating a new data frame with just the countries and their max case rate
 covid<-covid%>%drop_na(total_cases, population, gdp_per_capita)
