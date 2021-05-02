@@ -10,6 +10,21 @@ if (!grepl("covidSTSCI", path)){
 rm(list = ls())
 covidData = read_excel('COVID.xlsx')
 corruptionData = read_excel('corruption.xlsx')
+gdpData  = read_excel('unGDP.xlsx')
+histGDP = read.csv(file = 'histGDP.csv')
+
+colnames(gdpData)[6] = "gdp2020"
+gdpData = subset(gdpData, select = c(Country, gdp2020))
+gdpData$gdp2020 <- as.numeric(as.character(gdpData$gdp2020))
+gdpData$gdp2020 = gdpData$gdp2020 * 1000000000
+
+toDelete = seq(0, length(gdpData$Country), 2)
+gdpData <-  gdpData[-toDelete, ]
+
+setDT(histGDP)
+histGDP = histGDP[histGDP$Year == 2019]
+colnames(histGDP)[4] = "gdp2019"
+histGDP = subset(histGDP, select = c(Country.or.Area, gdp2019))
 
 corruptionData = dplyr::select(corruptionData, -contains("Country Name"))
 corruptionData = dplyr::select(corruptionData, -contains("Series Code"))
@@ -48,6 +63,11 @@ names[22] = 'regulationRank'
 names[23] = 'lawRank'
 names[24] = 'accountRank'
 colnames(masterData) = names
+
+masterData = merge(gdpData, masterData, by.x = "Country", by.y = "location", sort = TRUE)
+masterData = merge(histGDP, masterData, by.x = "Country.or.Area", by.y = "Country", sort = TRUE)
+masterData$gdp2020 = masterData$gdp2020/masterData$population
+masterData$deltaGDP = masterData$gdp2020 - masterData$gdp2019
 attach(masterData)
 
 masterData$corruptionRank <- as.numeric(as.character(masterData$corruptionRank))

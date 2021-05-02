@@ -2,39 +2,6 @@ rm(list = ls())
 source("dataBuild.R")
 load("covidCorruption.RData")
 
-# Cleaning
-masterData = masterData[order(masterData$gdp_per_capita),]
-masterData = masterData[order(masterData$gdp_per_capita),]
-masterData[is.na(masterData)] = 0
-
-med = median(masterData$gdp_per_capita)
-medGDP <- ifelse(masterData$gdp_per_capita >= med, yes = 1, no = 0)
-masterData$medGDP = medGDP
-
-# Normalize data and split into training test
-training =sample(1:nrow(masterData),nrow(masterData)/2, replace = FALSE)
-train = masterData[training,]
-test = masterData[-training,]
-testing = test$medGDP 
-
-
-#kNN
-train2 = cbind(population, stringency_index, human_development_index)[training, ]
-train2[is.na(train2)] = 0
-test2 = cbind(population, stringency_index, human_development_index)[-training, ]
-test2[is.na(test2)] = 0
-class = transpose(as.data.frame(subset(train, select = c(medGDP))))
-
-accum = c()
-for (numC in c(1, 2, 3, 5, 10, 20)){
-  knn_pred = knn(train2, test2, class, k = numC)
-  error = mean(knn_pred != testing)
-  accum = append(accum, error)
-  print(error)
-}
-
-plot(accum)
-
 # Normalize data and split into training test for continuous regression
 training =sample(1:nrow(masterData),nrow(masterData)/2, replace = FALSE)
 train = masterData[training,]
@@ -74,4 +41,27 @@ lda_pred = predict(lda, test)
 error = mean(lda_pred$class != testing)
 error
 
+masterData = masterData[masterData$total_cases < 5000000, ]
+masterData = masterData[masterData$deltaGDP > -10000, ]
+loessMod10 <- loess(deltaGDP ~ total_cases , data=masterData, span=0.10) # 10% smoothing span
+smoothed10 <- predict(loessMod10)
+loessMod25 <- loess(deltaGDP ~ total_cases, span=0.25) # 25% smoothing span
+smoothed25 <- predict(loessMod25)
+loessMod50 <- loess(deltaGDP ~ total_cases, data=masterData, span=0.50) # 50% smoothing span
+smoothed50 <- predict(loessMod50)
+loessMod75 <- loess(deltaGDP ~ total_cases, data=masterData, span=0.75) # 50% smoothing span
+smoothed75 <- predict(loessMod75)
 
+cleaned = masterData[masterData$deltaGDP != 0.0, ]
+plot(smoothed10, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
+plot(smoothed25, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
+plot(smoothed50, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
+plot(cleaned$deltaGDP, x=cleaned$total_cases,)
+par(new=TRUE)
+plot(smoothed50, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "yellow")
+
+lm_pred = predict(r, test)
+res = testing - lm_pred
+mean(res)
+
+plot(masterData$total_death, masterData$deltaGDP)
