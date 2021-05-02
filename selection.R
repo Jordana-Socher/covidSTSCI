@@ -9,31 +9,22 @@
 
 source("dataBuild.R")
 load("covidCorruption.RData")
-masterData = masterData[masterData$date == "2020-03-19"]
-regfit_full = regsubsets(deltaGDP~total_cases + total_deaths + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data = masterData)
+years <- unique(c(masterData$date))
+num <- c(replicate(length(years), 0))
 
-
+for (i in 1:length(years)){
+  yearData = masterData[masterData$date == years[i]]
+  
+  regfit_full = regsubsets(deltaGDP~total_cases + total_deaths + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data = yearData)
+  
+  #summary(regfit_full)
+  
+  res.sum <- summary(regfit_full)
+  
+  num[i] <- which.max(res.sum$adjr2)
+}
+mean(num)
 summary(regfit_full)
-reg_summary = summary(regfit_full)
-
-res.sum <- summary(regfit_full)
-
-data.frame(
-  Adj.R2 = which.max(res.sum$adjr2),
-  CP = which.min(res.sum$cp),
-  BIC = which.min(res.sum$bic)
-)
-
-regfit_full = regsubsets(deltaGDP~total_cases + total_deaths + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data = masterData)
 
 
-summary(regfit_full)
-reg_summary = summary(regfit_full)
 
-res.sum <- summary(regfit_full)
-
-data.frame(
-  Adj.R2 = which.max(res.sum$adjr2),
-  CP = which.min(res.sum$cp),
-  BIC = which.min(res.sum$bic)
-)
