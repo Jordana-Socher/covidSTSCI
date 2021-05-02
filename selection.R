@@ -9,34 +9,22 @@
 
 source("dataBuild.R")
 load("covidCorruption.RData")
-regfit_full = regsubsets(gdp50~total_cases + total_deaths + population + stringency_index + human_development_index , data = masterData)
+years <- unique(c(masterData$date))
+num <- c(replicate(length(years), 0))
+
+for (i in 1:length(years)){
+  yearData = masterData[masterData$date == years[i]]
+  
+  regfit_full = regsubsets(deltaGDP~total_cases + total_deaths + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data = yearData)
+  
+  #summary(regfit_full)
+  
+  res.sum <- summary(regfit_full)
+  
+  num[i] <- which.max(res.sum$adjr2)
+}
+mean(num)
 summary(regfit_full)
-reg_summary = summary(regfit_full)
-names(reg_summary)
 
-get_cv_error <- function(model.formula, data){
-  set.seed(1)
-  train.control <- trainControl(method = "cv", number = 5)
-  cv <- train(model.formula, data = data, method = "lda",
-              trControl = train.control)
-  cv$results$RMSE
-}
-get_model_formula <- function(id, object, outcome){
-  # get models data
-  models <- summary(object)$which[id,-1]
-  # Get outcome variable
-  #form <- as.formula(object$call[[2]])
-  #outcome <- all.vars(form)[1]
-  # Get model predictors
-  predictors <- names(which(models == TRUE))
-  predictors <- paste(predictors, collapse = "+")
-  # Build model formula
-  as.formula(paste0(outcome, "~", predictors))
-}
 
-model.ids <- 1:5
-cv.errors <-  map(model.ids, get_model_formula, regfit_full, "gdp50") %>%
-  map(get_cv_error, data = swiss) %>%
-  unlist()
-cv.errors
 
