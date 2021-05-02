@@ -1,29 +1,21 @@
-m(list = ls())
+rm(list = ls())
 source("dataBuild.R")
 load("covidCorruption.RData")
 
-# Normalize data and split into training test
-attach(masterData)
+# Cleaning
 masterData = masterData[order(masterData$gdp_per_capita),]
-masterData =  drop_na(c("gdp_per_capita"))
+masterData = masterData[order(masterData$gdp_per_capita),]
+masterData[is.na(masterData)] = 0
 
 med = median(masterData$gdp_per_capita)
 medGDP <- ifelse(masterData$gdp_per_capita >= med, yes = 1, no = 0)
 masterData$medGDP = medGDP
 
+# Normalize data and split into training test
 training =sample(1:nrow(masterData),nrow(masterData)/2, replace = FALSE)
 train = masterData[training,]
 test = masterData[-training,]
 testing = test$medGDP 
-
-# How do these regressors predict how corrupt a country is? How does this compare to model excluding
-# covid numbers etc. Do we need some model selection technique? Grid search?
-
-#lda = lda(gdp_per_capita ~ total_cases + total_deaths + population + stringency_index + human_development_index, data=masterData, subset = training)
-#lda = lda(gdp_per_capita ~  total_cases + total_deaths + population + stringency_index + human_development_index, data=masterData, subset = training)
-#lda_pred = predict(lda, test)
-#error = mean(lda_pred$class != testing)
-#error
 
 
 #kNN
@@ -43,9 +35,7 @@ for (numC in c(1, 2, 3, 5, 10, 20)){
 
 plot(accum)
 
-# Normalize data and split into training test
-masterData = masterData[order(masterData$gdp_per_capita),]
-masterData[is.na(masterData)] = 0
+# Normalize data and split into training test for continuous regression
 training =sample(1:nrow(masterData),nrow(masterData)/2, replace = FALSE)
 train = masterData[training,]
 train = na.omit(train)
@@ -63,13 +53,12 @@ data.frame(
   BIC = which.min(res.sum$bic)
 )
 
-# How do these regressors predict how corrupt a country is? How does this compare to model excluding
-# covid numbers etc. Do we need some model selection technique? Grid search?
+#Linear Regression
 r = lm(gdp_per_capita ~ total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
 summary(r)
 r = lm(total_deaths~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
 
-
+#Logistic Regression
 r = glm(gdp_per_capita ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
 summary(r)
 r = glm(total_cases ~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
@@ -80,7 +69,6 @@ mean(res)
 
 
 lda = lda(gdphalf ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
-
 lda = lda(gdphalf ~  total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
 lda_pred = predict(lda, test)
 error = mean(lda_pred$class != testing)
