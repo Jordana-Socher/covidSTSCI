@@ -1,5 +1,14 @@
 source("dataBuild.R")
 load("covidCorruption.RData")
+library(dplyr)
+#install.packages("corrplot")
+library(corrplot)
+
+data=masterData %>%
+  select(lawRank, accountRank, total_deaths,regulationRank, govRank,corruptionRank,total_cases,gdp_per_capita)
+
+cor=cor(data)
+corrplot(cor, method="circle")
 
 summary(masterData$lawRank)
 old.par <- par(mfrow=c(2, 5))

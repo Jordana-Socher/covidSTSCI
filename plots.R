@@ -27,11 +27,11 @@ covid<-read_excel("COVID.xlsx")
 plot1 = ggplot(data =masterData, aes(x = lawRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
 plot2 = ggplot(data =masterData, aes(x = accountRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
 plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot4 = ggplot(data =masterData, aes(x = total_deaths, y = gdp_per_capita))  + geom_smooth(method = "lm")
+plot4 = ggplot(data =masterData, aes(x = total_deaths, y = gdp_per_capita))   +geom_smooth(method = "lm")
 plot5 = ggplot(data =masterData, aes(x = regulationRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
 plot6 = ggplot(data =masterData, aes(x = govRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
 plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot8 = ggplot(data =masterData, aes(x = total_cases, y = gdp_per_capita)) + geom_smooth(method = "lm")
+plot8 = ggplot(data =masterData, aes(x = total_cases, y = gdp_per_capita)) +geom_smooth(method = "lm")
 
 plot1
 plot2
@@ -54,7 +54,7 @@ world <- ne_countries(scale = "medium", returnclass = "sf")
 world_1=merge(world, covid_max_rate_df, by.x="name", by.y="location")
 names(world_1)[names(world_1) == "max(caseRatePer100k)"] <- "max_case_rate"
 
-#merging world with masterData df to plot corruption and gdp
+#merging world with masterData df to plot percent change in gdp from 2019 to 2020
 masterData<-masterData%>%drop_na(gdp2020)
 percent_change_gdp=masterData%>%group_by(Country.or.Area)%>%summarise((gdp2020-gdp2019)/gdp2020)
 percent_change_gdp=unique(percent_change_gdp)
@@ -63,6 +63,7 @@ percent_change_gdp$percent_change_gdp=abs(percent_change_gdp$percent_change_gdp)
 
 world_2=merge(world, percent_change_gdp, by.x="name", by.y="Country.or.Area")
 
+#merging world and master data to get lawrank graphed
 lawrank=masterData %>%
   select(Country.or.Area, lawRank)
 lawrank=unique(lawrank)
@@ -73,12 +74,12 @@ ggplot(data = world_1) +
   geom_sf(aes(fill = max_case_rate)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
 
-#world plot of gdp per country
+#world plot of gdp percent change per country
 ggplot(data = world_2) +
   geom_sf(aes(fill = percent_change_gdp)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
 
-#world plot of corruption per country
+#world plot of law rank per country
 ggplot(data = world_3) +
   geom_sf(aes(fill = lawRank)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
