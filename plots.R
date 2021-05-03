@@ -56,9 +56,9 @@ names(world_1)[names(world_1) == "max(caseRatePer100k)"] <- "max_case_rate"
 
 #merging world with masterData df to plot percent change in gdp from 2019 to 2020
 masterData<-masterData%>%drop_na(gdp2020)
-percent_change_gdp=masterData%>%group_by(Country.or.Area)%>%summarise((gdp2020-gdp2019)/gdp2020)
+percent_change_gdp=masterData%>%group_by(Country.or.Area)%>%summarise(((gdp2020-gdp2019)/gdp2020)*100)
 percent_change_gdp=unique(percent_change_gdp)
-names(percent_change_gdp)[names(percent_change_gdp) == "(gdp2020 - gdp2019)/gdp2020"] <- "percent_change_gdp"
+names(percent_change_gdp)[names(percent_change_gdp) == "((gdp2020 - gdp2019)/gdp2020) * 100"] <- "percent_change_gdp"
 percent_change_gdp$percent_change_gdp=abs(percent_change_gdp$percent_change_gdp)
 
 world_2=merge(world, percent_change_gdp, by.x="name", by.y="Country.or.Area")
@@ -78,6 +78,7 @@ ggplot(data = world_1) +
 ggplot(data = world_2) +
   geom_sf(aes(fill = percent_change_gdp)) +
   scale_fill_viridis_c(option = "plasma", trans = "sqrt")
+
 
 #world plot of law rank per country
 ggplot(data = world_3) +
