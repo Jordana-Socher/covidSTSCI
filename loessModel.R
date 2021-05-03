@@ -23,7 +23,7 @@ for (i in 0:length(x)) {
   if (length(localData$Country.or.Area) !=0) {
     loessMod25 <- loess(deltaGDP ~lawRank, data=localData, span=0.25) # 25% smoothing span
     smoothed25 <- predict(loessMod25)
-    
+
     loessMod50 <- loess(deltaGDP ~ lawRank, data=localData, span=0.50) # 50% smoothing span
     smoothed50 <- predict(loessMod50)
     
