@@ -31,8 +31,8 @@ for (index in 1:length(x)){
  
 }
 rse=na.omit(rse)
-rse_lm=mean(rse)
-rse_lm
+sum_rse_lm=sum(rse)
+mean_rse_lm=mean(rse)
 
 r2s[r2s == 1.0] = 0.0
 for (ind in 1:length(r2s)){

@@ -40,21 +40,24 @@ for (i in 0:length(x)) {
     globalData <- rbind(globalData, localData)
   }
 }
-
+#only used 1:266 or 1:294 because the rest were NA or inf values
 rse_lm25=na.omit(rse_lm25)
 rse_lm25=rse_lm25[!is.infinite(rse_lm25)]
 rse_lm25=rse_lm25[1:266]
-mean(rse_lm25)
+sum_rse_lm25=sum(rse_lm25)
+mean_rse_lm25=mean(rse_lm25)
 
 rse_lm50=na.omit(rse_lm50)
 rse_lm50=rse_lm50[!is.infinite(rse_lm50)]
 rse_lm50=rse_lm50[1:266]
-mean(rse_lm50)
+sum_rse_lm50=sum(rse_lm50)
+mean_rse_lm50=mean(rse_lm50)
 
 rse_lm75=na.omit(rse_lm75)
 rse_lm75=rse_lm75[!is.infinite(rse_lm75)]
 rse_lm75=rse_lm75[1:294]
-mean(rse_lm75)
+sum_rse_lm75=sum(rse_lm75)
+mean_rse_lm75=mean(rse_lm75)
 
 # Clean the returned data set
 names(globalData)[1] = "date"

@@ -33,8 +33,8 @@ for (index in 1:length(x)){
   
 }
 rse_gl=na.omit(rse_gl)
-rse_glm=mean(rse_gl)
-rse_glm
+sum_rse_gl=sum(rse_gl)
+mean_rse_gl=mean(rse_gl)
 
 aics[aics == -Inf] = Inf
 aics[aics == 0.0] = Inf
