@@ -15,6 +15,9 @@ masterData = masterData[!is.na(masterData$lawRank), ]
 # track the model's ability to predict the change in GDP from 2019 to 2020 over 
 # time. 
 x <- unique(c(masterData$date))
+rse_lm25 <- c(replicate(length(x), 0))
+rse_lm50 <- c(replicate(length(x), 0))
+rse_lm75 <- c(replicate(length(x), 0))
 globalData = data.frame()
 for (i in 0:length(x)) {
   
@@ -23,17 +26,35 @@ for (i in 0:length(x)) {
   if (length(localData$Country.or.Area) !=0) {
     loessMod25 <- loess(deltaGDP ~lawRank, data=localData, span=0.25) # 25% smoothing span
     smoothed25 <- predict(loessMod25)
+    rse_lm25[i]<-loessMod25$s
 
     loessMod50 <- loess(deltaGDP ~ lawRank, data=localData, span=0.50) # 50% smoothing span
     smoothed50 <- predict(loessMod50)
+    rse_lm50[i]<-loessMod50$s
     
     loessMod75 <- loess(deltaGDP ~ lawRank, data=localData, span=0.75) # 50% smoothing span
     smoothed75 <- predict(loessMod75)
+    rse_lm75[i]<-loessMod75$s
     
     localData = c(x[i], loessMod25$s, loessMod50$s, loessMod75$s)
     globalData <- rbind(globalData, localData)
   }
 }
+
+rse_lm25=na.omit(rse_lm25)
+rse_lm25=rse_lm25[!is.infinite(rse_lm25)]
+rse_lm25=rse_lm25[1:266]
+mean(rse_lm25)
+
+rse_lm50=na.omit(rse_lm50)
+rse_lm50=rse_lm50[!is.infinite(rse_lm50)]
+rse_lm50=rse_lm50[1:266]
+mean(rse_lm50)
+
+rse_lm75=na.omit(rse_lm75)
+rse_lm75=rse_lm75[!is.infinite(rse_lm75)]
+rse_lm75=rse_lm75[1:294]
+mean(rse_lm75)
 
 # Clean the returned data set
 names(globalData)[1] = "date"

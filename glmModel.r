@@ -15,12 +15,16 @@ masterData = masterData[masterData$lawRank != 0.0, ]
 masterData = masterData[masterData$accountRank != 0.0, ]
 
 count = 0
+rse_gl <- c(replicate(length(x), 0))
 for (index in 1:length(x)){
   covidData <-  masterData[masterData$date == x[index]]
   print(" ")
   #Linear Regression
   if (length(covidData$total_deaths) > 10){
     r = glm(deltaGDP ~ total_deaths + stabilityRank  + lawRank + accountRank, data=covidData)
+    df<-summary(r)$df.residual
+    dev<-summary(r)$deviance
+    rse_gl[index]<-(dev/df)**(1/2)
     aics[index] <- summary(r)$aic
   }else{
     print(x[index])
@@ -28,6 +32,9 @@ for (index in 1:length(x)){
   }
   
 }
+rse_gl=na.omit(rse_gl)
+rse_glm=mean(rse_gl)
+rse_glm
 
 aics[aics == -Inf] = Inf
 aics[aics == 0.0] = Inf

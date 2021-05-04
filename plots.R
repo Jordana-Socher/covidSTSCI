@@ -24,14 +24,14 @@ library(rgeos)
 covid<-read_excel("COVID.xlsx")
 
 #original plots
-plot1 = ggplot(data =masterData, aes(x = lawRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot2 = ggplot(data =masterData, aes(x = accountRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot4 = ggplot(data =masterData, aes(x = total_deaths, y = gdp_per_capita))   +geom_smooth(method = "lm")
-plot5 = ggplot(data =masterData, aes(x = regulationRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot6 = ggplot(data =masterData, aes(x = govRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = gdp_per_capita)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot8 = ggplot(data =masterData, aes(x = total_cases, y = gdp_per_capita)) +geom_smooth(method = "lm")
+plot1 = ggplot(data =masterData, aes(x = lawRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot2 = ggplot(data =masterData, aes(x = accountRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot4 = ggplot(data =masterData, aes(x = (total_deaths/population)*100, y = deltaGDP))  +geom_smooth(method = "lm")+xlab("Percent of Deaths from Population")
+plot5 = ggplot(data =masterData, aes(x = regulationRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot6 = ggplot(data =masterData, aes(x = govRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
+plot8 = ggplot(data =masterData, aes(x = (total_cases/population)*100, y = deltaGDP)) +geom_smooth(method = "lm")+xlab("Percent of Cases from Population")
 
 plot1
 plot2
