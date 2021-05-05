@@ -54,6 +54,18 @@ names(globalData)[2] = "lpoly"
 names(globalData)[3] = "subsetlinear"
 names(globalData)[4] = "basiclinear"
 
+globalData$lpoly=as.numeric(globalData$lpoly)
+sd_lpoly=(sum(globalData$lpoly-mean(globalData$lpoly))/(length(globalData$lpoly)-1))**(1/2)
+sd_lpoly
+
+globalData$subsetlinear=as.numeric(globalData$subsetlinear)
+sd_subsetlinear=(sum(globalData$subsetlinear-mean(globalData$subsetlinear))/(length(globalData$subsetlinear)-1))**(1/2)
+sd_subsetlinear
+
+globalData$basiclinear=as.numeric(globalData$basiclinear)
+sd_basiclinear=(sum(globalData$basiclinear-mean(globalData$basiclinear))/(length(globalData$basiclinear)-1))**(1/2)
+sd_basiclinear
+
 plot(as.Date(globalData$date), globalData$lpoly, col = "red", pch="+", 
      xlab="", ylab="", xaxt='n', yaxt='n')
 par(new=TRUE)
