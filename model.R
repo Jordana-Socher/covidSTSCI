@@ -2,66 +2,63 @@ rm(list = ls())
 source("dataBuild.R")
 load("covidCorruption.RData")
 
-# Normalize data and split into training test for continuous regression
-training =sample(1:nrow(masterData),nrow(masterData)/2, replace = FALSE)
-train = masterData[training,]
-train = na.omit(train)
-test = masterData[-training,]
-test = na.omit(test)
-testing = test$gdp_per_capita
-
-regfit_full = regsubsets(total_deaths~total_cases + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data = masterData)
-summary(regfit_full)
-res.sum <- summary(regfit_full)
-
-data.frame(
-  Adj.R2 = which.max(res.sum$adjr2),
-  CP = which.min(res.sum$cp),
-  BIC = which.min(res.sum$bic)
-)
-
-#Linear Regression
-r = lm(gdp_per_capita ~ total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
-summary(r)
-r = lm(total_deaths~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
-
-#Logistic Regression
-r = glm(gdp_per_capita ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + regulationRank + lawRank + accountRank, data=masterData, subset=training)
-summary(r)
-r = glm(total_cases ~ stringency_index + human_development_index + corruptionRank + govRank + stabilityRank + accountRank, data=masterData, subset=training)
-
-lm_pred = predict(r, test)
-res = testing - lm_pred
-mean(res)
-
-
-lda = lda(gdphalf ~ total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
-lda = lda(gdphalf ~  total_cases + total_deaths + population + stringency_index + human_development_index + corruptionRank, data=masterData, subset = training)
-lda_pred = predict(lda, test)
-error = mean(lda_pred$class != testing)
-error
+# Model Loop. Iterates over days and runs loess local polynomial regression 
+# with varying bandwith selections. The model regressors are from selection.R,
+# using a general linear approach. Unit of analysis is country on day d.
 
 masterData = masterData[masterData$total_cases < 5000000, ]
 masterData = masterData[masterData$deltaGDP > -10000, ]
-loessMod10 <- loess(deltaGDP ~ total_cases , data=masterData, span=0.10) # 10% smoothing span
-smoothed10 <- predict(loessMod10)
-loessMod25 <- loess(deltaGDP ~ total_cases, span=0.25) # 25% smoothing span
-smoothed25 <- predict(loessMod25)
-loessMod50 <- loess(deltaGDP ~ total_cases, data=masterData, span=0.50) # 50% smoothing span
-smoothed50 <- predict(loessMod50)
-loessMod75 <- loess(deltaGDP ~ total_cases, data=masterData, span=0.75) # 50% smoothing span
-smoothed75 <- predict(loessMod75)
+masterData = masterData[!is.na(masterData$lawRank), ]
 
-cleaned = masterData[masterData$deltaGDP != 0.0, ]
-plot(smoothed10, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
-plot(smoothed25, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
-plot(smoothed50, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "red")
-plot(cleaned$deltaGDP, x=cleaned$total_cases,)
+# Begin model loop. Iterates over unique days and appends model statistics 
+# to globalData. r2 is most valuable here, allowing us to 
+# track the model's ability to predict the percent change in GDP from 2019 to 2020 over 
+# time. 
+
+x <- unique(c(masterData$date))
+globalData = data.frame()
+for (i in 0:length(x)) {
+  
+  localData = masterData[masterData$date == x[i],]
+  localData[is.na(localData)] = 0
+  
+  print(x[i])
+  if (length(localData$Country.or.Area) !=0) {
+    
+    if (mean(localData$total_deaths) != 0) {
+      # Lpoly regression with subset
+      np=npreg(deltaGDP ~ total_deaths + stabilityRank  + lawRank + accountRank, na.rm = TRUE, ckertype = "uniform", data=localData)
+      
+      # Subset Linear Model 
+      lm = lm(deltaGDP ~ total_deaths + stabilityRank  + lawRank + accountRank, data=localData)
+      
+      # Kitchen Sink Model
+      basic = lm(deltaGDP ~ total_deaths + total_cases  + stringency_index + accountRank, data=localData)
+    } else{
+      np=npreg(deltaGDP ~ stabilityRank  + lawRank + accountRank, na.rm = TRUE, ckertype = "uniform", data=localData)
+      lm = lm(deltaGDP ~ stabilityRank  + lawRank + accountRank, data=localData)
+      basic = lm(deltaGDP ~ total_cases  + stringency_index + accountRank, data=localData)
+    }
+    
+    lm = summary(lm)$r.squared
+    basic = summary(basic)$r.squared
+    np = np$R2
+    to_add = c(x[i],np , lm, basic)
+    globalData <- rbind(globalData, to_add)
+    
+  }
+}
+
+names(globalData)[1] = "date"
+names(globalData)[2] = "lpoly"
+names(globalData)[3] = "subsetlinear"
+names(globalData)[4] = "basiclinear"
+
+plot(as.Date(globalData$date), globalData$lpoly, col = "red", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
 par(new=TRUE)
-plot(smoothed50, x=cleaned$total_cases, main="Loess Smoothing and Prediction", xlab="Date", ylab="Unemployment (Median)", col = "yellow")
-
-lm_pred = predict(r, test)
-res = testing - lm_pred
-mean(res)
-
-plot(masterData$total_death, masterData$deltaGDP)
+plot(as.Date(globalData$date), globalData$subsetlinear, col = "blue", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$basiclinear, col = "green", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')

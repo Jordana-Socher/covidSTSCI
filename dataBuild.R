@@ -48,7 +48,7 @@ colnames(masterData) = names
 masterData = merge(gdpData, masterData, by.x = "Country", by.y = "location", sort = TRUE)
 masterData = merge(histGDP, masterData, by.x = "Country.or.Area", by.y = "Country", sort = TRUE)
 masterData$gdp2020 = masterData$gdp2020/masterData$population
-masterData$deltaGDP = masterData$gdp2020 - masterData$gdp2019
+masterData$deltaGDP = (masterData$gdp2020 - masterData$gdp2019)/masterData$gdp2019
 
 masterData$corruptionRank <- as.numeric(as.character(masterData$corruptionRank))
 masterData$govRank <- as.numeric(as.character(masterData$govRank))
