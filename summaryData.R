@@ -1,14 +1,16 @@
 source("dataBuild.R")
+install.packages("reshape")
 load("covidCorruption.RData")
 library(dplyr)
 #install.packages("corrplot")
 library(corrplot)
 
 data=masterData %>%
-  select(lawRank, accountRank, total_deaths,regulationRank, govRank,corruptionRank,total_cases,gdp_per_capita)
+  select(lawRank, accountRank, total_deaths,regulationRank, govRank,corruptionRank,total_cases,gdp_per_capita, stabilityRank)
 
-cor=cor(data)
-corrplot(cor, method="circle")
+
+cor=cor(data, use = "complete.obs")
+corrplot(cor, method="circle", tl.col="black")
 
 summary(masterData$lawRank)
 old.par <- par(mfrow=c(2, 5))
@@ -16,6 +18,8 @@ hist(masterData$lawRank, main="Law Rank", xlab="Law Rank")
 
 summary(masterData$accountRank)
 hist(masterData$accountRank, main="Account Rank", xlab="Account Rank")
+
+summary(masterData$deltaGDP)
 
 summary(masterData$total_deaths)
 hist(masterData$total_deaths, main="Total Deaths", xlab="Total Deaths")

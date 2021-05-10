@@ -24,14 +24,14 @@ library(rgeos)
 covid<-read_excel("COVID.xlsx")
 
 #original plots
-plot1 = ggplot(data =masterData, aes(x = lawRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot2 = ggplot(data =masterData, aes(x = accountRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot4 = ggplot(data =masterData, aes(x = (total_deaths/population)*100, y = deltaGDP))  +geom_smooth(method = "lm")+xlab("Percent of Deaths from Population")
-plot5 = ggplot(data =masterData, aes(x = regulationRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot6 = ggplot(data =masterData, aes(x = govRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = deltaGDP)) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")
-plot8 = ggplot(data =masterData, aes(x = (total_cases/population)*100, y = deltaGDP)) +geom_smooth(method = "lm")+xlab("Percent of Cases from Population")
+plot1 = ggplot(data =masterData, aes(x = lawRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot2 = ggplot(data =masterData, aes(x = accountRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot3 = ggplot(data =masterData, aes(x = stabilityRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot4 = ggplot(data =masterData, aes(x = (total_deaths/population)*100, y = log((deltaGDP/gdp2019)*100)))  +geom_smooth(method = "lm")+xlab("Percent of Deaths from Population")+ylab("Log of Percent Change in GDP")
+plot5 = ggplot(data =masterData, aes(x = regulationRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot6 = ggplot(data =masterData, aes(x = govRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot7 = ggplot(data =masterData, aes(x = corruptionRank, y = log((deltaGDP/gdp2019)*100))) + geom_text(aes(label = Country.or.Area), size = 2) + geom_smooth(method = "lm")+ylab("Log of Percent Change in GDP")
+plot8 = ggplot(data =masterData, aes(x = (total_cases/population)*100, y = log((deltaGDP/gdp2019)*100))) +geom_smooth(method = "lm")+xlab("Percent of Cases from Population")+ylab("Log of Percent Change in GDP")
 
 plot1
 plot2

@@ -76,8 +76,24 @@ plot(as.Date(globalData$date), globalData$basiclinear, col = "#443A83FF", pch="+
      xlab="Date", ylab="R2")
 
 
+<<<<<<< HEAD
 
 plot(as.Date(globalData$date), globalData$lm_stability_p, col = "#365D8DFF", pch="+", 
+=======
+globalData$lpoly=as.numeric(globalData$lpoly)
+sd_lpoly=(sum(globalData$lpoly-mean(globalData$lpoly))/(length(globalData$lpoly)-1))**(1/2)
+sd_lpoly
+
+globalData$subsetlinear=as.numeric(globalData$subsetlinear)
+sd_subsetlinear=(sum(globalData$subsetlinear-mean(globalData$subsetlinear))/(length(globalData$subsetlinear)-1))**(1/2)
+sd_subsetlinear
+
+globalData$basiclinear=as.numeric(globalData$basiclinear)
+sd_basiclinear=(sum(globalData$basiclinear-mean(globalData$basiclinear))/(length(globalData$basiclinear)-1))**(1/2)
+sd_basiclinear
+
+plot(as.Date(globalData$date), globalData$lpoly, col = "red", pch="+", 
+>>>>>>> 7e186262a296f9521bdece0dfc89d2edb41f39c4
      xlab="", ylab="", xaxt='n', yaxt='n')
 par(new=TRUE)
 plot(as.Date(globalData$date), globalData$lm_law_p, col = "#443A83FF", pch="+", 
