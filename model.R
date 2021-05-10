@@ -35,21 +35,26 @@ for (i in 0:length(x)) {
       
       # Kitchen Sink Model
       basic = lm(deltaGDP ~ total_deaths + total_cases  + stringency_index + accountRank, data=localData)
+      basic_deaths_p = unname(summary(basic)$coefficients[,4]["total_deaths"])
     } else{
       np=npreg(deltaGDP ~ stabilityRank  + lawRank + accountRank, na.rm = TRUE, ckertype = "uniform", data=localData)
       lm = lm(deltaGDP ~ stabilityRank  + lawRank + accountRank, data=localData)
-      basic = lm(deltaGDP ~ total_cases  + stringency_index + accountRank, data=localData)
+      basic = lm(deltaGDP ~ total_cases + accountRank + lawRank + stabilityRank + govRank + corruptionRank + regulationRank, data=localData)
       lm_deaths_p = 0
+      basic_deaths_p = 0
     }
   
     lm_stability_p = unname(summary(lm)$coefficients[,4]["stabilityRank"])
     lm_law_p = unname(summary(lm)$coefficients[,4]["lawRank"])
     lm_account_p = unname(summary(lm)$coefficients[,4]["accountRank"])
+    basic_stability_p = unname(summary(basic)$coefficients[,4]["stabilityRank"])
+    basic_law_p = unname(summary(basic)$coefficients[,4]["lawRank"])
+    basic_account_p = unname(summary(basic)$coefficients[,4]["accountRank"])
     
     lm = summary(lm)$r.squared
     basic = summary(basic)$r.squared
     np = np$R2
-    to_add = c(x[i],np , lm, basic,  lm_stability_p,  lm_law_p,  lm_account_p,  lm_deaths_p)
+    to_add = c(x[i],np , lm, basic,  lm_stability_p,  lm_law_p,  lm_account_p,  lm_deaths_p, basic_stability_p,  basic_law_p,  basic_account_p,  basic_deaths_p)
     globalData <- rbind(globalData, to_add)
     
   }
@@ -63,6 +68,10 @@ names(globalData)[5] = "lm_stability_p"
 names(globalData)[6] = "lm_law_p"
 names(globalData)[7] = "lm_account_p"
 names(globalData)[8] = "lm_deaths_p"
+names(globalData)[5] = "basic_stability_p"
+names(globalData)[9] = "basic_law_p"
+names(globalData)[10] = "basic_account_p"
+names(globalData)[11] = "basic_deaths_p"
 
 
 
@@ -76,10 +85,30 @@ plot(as.Date(globalData$date), globalData$basiclinear, col = "#443A83FF", pch="+
      xlab="Date", ylab="R2")
 
 
-<<<<<<< HEAD
-
 plot(as.Date(globalData$date), globalData$lm_stability_p, col = "#365D8DFF", pch="+", 
-=======
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$lm_law_p, col = "#443A83FF", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$lm_account_p, col = "#47C16EFF", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$lm_deaths_p, col = "#3a5dae", pch="+", 
+     xlab="", ylab="")
+
+plot(as.Date(globalData$date), globalData$basic_stability_p, col = "#365D8DFF", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$basic_law_p, col = "#443A83FF", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$basic_account_p, col = "#47C16EFF", pch="+", 
+     xlab="", ylab="", xaxt='n', yaxt='n')
+par(new=TRUE)
+plot(as.Date(globalData$date), globalData$basic_deaths_p, col = "#3a5dae", pch="+", 
+     xlab="", ylab="")
+
 globalData$lpoly=as.numeric(globalData$lpoly)
 sd_lpoly=(sum(globalData$lpoly-mean(globalData$lpoly))/(length(globalData$lpoly)-1))**(1/2)
 sd_lpoly
@@ -93,19 +122,7 @@ sd_basiclinear=(sum(globalData$basiclinear-mean(globalData$basiclinear))/(length
 sd_basiclinear
 
 plot(as.Date(globalData$date), globalData$lpoly, col = "red", pch="+", 
->>>>>>> 7e186262a296f9521bdece0dfc89d2edb41f39c4
-     xlab="", ylab="", xaxt='n', yaxt='n')
-par(new=TRUE)
-plot(as.Date(globalData$date), globalData$lm_law_p, col = "#443A83FF", pch="+", 
-     xlab="", ylab="", xaxt='n', yaxt='n')
-par(new=TRUE)
-plot(as.Date(globalData$date), globalData$lm_account_p, col = "#47C16EFF", pch="+", 
-     xlab="", ylab="", xaxt='n', yaxt='n')
-par(new=TRUE)
-plot(as.Date(globalData$date), globalData$lm_deaths_p, col = "#3a5dae", pch="+", 
      xlab="", ylab="")
-
-
 
 plot(as.Date(globalData$date), globalData$subsetlinear, col = "#47C16EFF", pch="+", 
      xlab="", ylab="", xaxt='n', yaxt='n')
